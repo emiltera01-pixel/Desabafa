@@ -22,7 +22,7 @@
       padding: 20px;
     }
 
-    .container {
+    .app {
       width: 100%;
       max-width: 420px;
       background: rgba(255, 255, 255, 0.08);
@@ -45,33 +45,6 @@
       color: #e5e7eb;
     }
 
-    .btn {
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-top: 10px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    .btn-primary {
-      background: #22c55e;
-      color: white;
-      font-weight: bold;
-    }
-
-    .btn-secondary {
-      background: #2563eb;
-      color: white;
-    }
-
-    .btn-light {
-      background: white;
-      color: #111827;
-      font-weight: bold;
-    }
-
     input {
       width: 100%;
       padding: 14px 16px;
@@ -82,50 +55,56 @@
       margin-top: 10px;
     }
 
-    .section {
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .primary {
+      background: #22c55e;
+      color: white;
+    }
+
+    .secondary {
+      background: white;
+      color: #111827;
+    }
+
+    .hidden {
       display: none;
     }
 
-    .visible {
-      display: block;
-    }
-
     .small {
+      margin-top: 10px;
       font-size: 0.9rem;
       color: #cbd5e1;
-      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div id="welcome-section">
+  <div class="app">
+    <div id="nickname-box">
       <h1>Desabafa</h1>
-      <p>Um espaço simples e anónimo para falares sem pressão.</p>
-      <button class="btn btn-primary" onclick="showNicknameSection()">Começar</button>
-      <button class="btn btn-secondary" onclick="window.location.href='/login.html'">Entrar</button>
-      <div class="small">Se for a tua primeira vez, clica em Começar.</div>
-    </div>
-
-    <div id="nickname-section" class="section">
-      <h1>Escolhe um nome fictício</h1>
-      <p>Este nome vai ser usado só dentro da plataforma.</p>
+      <p>Escolhe um nome fictício para entrares na plataforma.</p>
       <input type="text" id="nickname" placeholder="Ex: Lua, Azul, Nuvem..." />
-      <button class="btn btn-primary" onclick="startApp()">Continuar</button>
-      <button class="btn btn-light" onclick="backToWelcome()">Voltar</button>
+      <button class="primary" onclick="startApp()">Entrar</button>
+      <div class="small">O nome fica guardado neste dispositivo.</div>
     </div>
   </div>
 
   <script>
-    function showNicknameSection() {
-      document.getElementById('welcome-section').style.display = 'none';
-      document.getElementById('nickname-section').style.display = 'block';
-    }
-
-    function backToWelcome() {
-      document.getElementById('nickname-section').style.display = 'none';
-      document.getElementById('welcome-section').style.display = 'block';
-    }
+    window.addEventListener('load', () => {
+      const saved = localStorage.getItem('nickname');
+      if (saved) {
+        document.getElementById('nickname').value = saved;
+      }
+    });
 
     function startApp() {
       const name = document.getElementById('nickname').value.trim();
