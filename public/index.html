@@ -33,8 +33,24 @@
     }
     * { box-sizing: border-box; }
     body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
-    .topbar { background: var(--topbar); padding: 16px 24px; box-shadow: 0 2px 12px var(--shadow); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .topbar a, .topbar button { text-decoration: none; border: none; cursor: pointer; padding: 10px 14px; border-radius: 12px; font-weight: 700; }
+    .topbar {
+      background: var(--topbar);
+      padding: 16px 24px;
+      box-shadow: 0 2px 12px var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .topbar a, .topbar button {
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 700;
+    }
     .btn-login { background: #4f46e5; color: white; }
     .btn-register { background: #e0e7ff; color: #1e3a8a; }
     .btn-logout { background: #ef4444; color: white; }
@@ -42,31 +58,132 @@
     body.dark .btn-register { background: #334155; color: #f9fafb; }
     body.dark .btn-theme { background: #f9fafb; color: #111827; }
     .container { max-width: 900px; margin: 28px auto; padding: 0 16px 40px; }
-    .card { background: var(--card); border-radius: 18px; padding: 18px; margin-bottom: 18px; box-shadow: 0 8px 26px var(--shadow); color: var(--text); }
-    textarea, input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; font-size: 15px; margin-top: 10px; background: var(--input); color: var(--text); }
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 26px var(--shadow);
+      color: var(--text);
+    }
+    textarea, input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      margin-top: 10px;
+      background: var(--input);
+      color: var(--text);
+    }
     textarea::placeholder, input::placeholder { color: var(--muted); }
-    button.action { margin-top: 10px; background: #4f46e5; color: white; border: none; padding: 12px 16px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+    button.action {
+      margin-top: 10px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
     .message { border-left: 5px solid #4f46e5; background: var(--message); }
     .meta { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
-    .comments { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
-    .comment { background: var(--message); border-radius: 12px; padding: 10px; margin-top: 10px; }
-    .small-btn { margin-right: 8px; margin-top: 8px; background: #e5e7eb; color: #111827; border: none; padding: 8px 10px; border-radius: 10px; cursor: pointer; }
+    .comments {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .comment {
+      background: var(--message);
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .small-btn {
+      margin-right: 8px;
+      margin-top: 8px;
+      background: #e5e7eb;
+      color: #111827;
+      border: none;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
     body.dark .small-btn { background: #374151; color: #f9fafb; }
     .edit-btn { background: #fde68a; }
     .danger-btn { background: #dc2626; color: white; }
     .empty { text-align: center; color: var(--muted); padding: 30px 10px; }
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; padding: 20px; }
-    .modal { width: 100%; max-width: 520px; background: var(--card); color: var(--text); border-radius: 18px; padding: 20px; box-shadow: 0 20px 60px var(--shadow); }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
-    .admin-link { background: #111827; color: white; margin-right: 10px; }
-    footer { margin-top: 24px; background: var(--footer); color: var(--muted); border-top: 1px solid var(--border); padding: 18px 16px; font-size: 14px; }
-    .footer-inner { max-width: 900px; margin: 0 auto; display: grid; gap: 8px; line-height: 1.5; }
-    .footer-warning { color: #b91c1c; font-weight: 700; }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      background: var(--card);
+      color: var(--text);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 20px 60px var(--shadow);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    .admin-link {
+      background: #111827;
+      color: white;
+      margin-right: 10px;
+    }
+    footer {
+      margin-top: 24px;
+      background: var(--footer);
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding: 18px 16px;
+      font-size: 14px;
+    }
+    .footer-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      gap: 8px;
+      line-height: 1.5;
+    }
+    .footer-warning {
+      color: #b91c1c;
+      font-weight: 700;
+    }
     body.dark .footer-warning { color: #fca5a5; }
-    #limitBox { display:none; background:#fff3cd; color:#111827; }
+    #limitBox {
+      display:none;
+      background:#fff3cd;
+      color:#111827;
+    }
     #nicknameCard { display:none; }
-    #selectedNicknameBox { margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--badge); font-weight: 700; }
-    .suggestion { background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; cursor: pointer; text-align: center; font-weight: 700; }
+    #selectedNicknameBox {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--badge);
+      font-weight: 700;
+    }
+    .suggestion {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 700;
+    }
     .suggestion:hover { background: #eef2ff; }
     body.dark .suggestion { background: #1f2937; }
     body.dark .suggestion:hover { background: #334155; }
@@ -260,14 +377,19 @@
       const data = await res.json();
       currentUser = data.user;
       renderAuth();
+      await loadSuggestions();
+
       const savedNickname = getStoredNickname();
-      if (!savedNickname && !currentUser) {
+      if (!savedNickname) {
         nicknameCard.style.display = 'block';
         publishCard.style.display = 'none';
         menuCard.style.display = 'none';
-        await loadSuggestions();
       } else {
         nicknameCard.style.display = 'none';
+        publishCard.style.display = 'block';
+        menuCard.style.display = 'block';
+        nicknameInput.value = savedNickname;
+        selectedNicknameBox.textContent = `Nome fictício escolhido: ${savedNickname}`;
       }
     }
 
@@ -295,11 +417,13 @@
           <a class="btn-register" href="register.html">Registar</a>
         `;
         welcomeCard.style.display = 'block';
-        if (!getStoredNickname()) {
+        const savedNickname = getStoredNickname();
+        if (!savedNickname) {
           nicknameCard.style.display = 'block';
           publishCard.style.display = 'none';
           menuCard.style.display = 'none';
         } else {
+          nicknameCard.style.display = 'none';
           publishCard.style.display = 'block';
           menuCard.style.display = 'block';
         }
@@ -420,7 +544,6 @@
       initTheme();
       await loadCategories();
       await loadMe();
-      await loadSuggestions();
       await loadMessages();
       if (getDailyCount() >= MAX_MESSAGES) showLimitBox();
     }
