@@ -13,6 +13,8 @@ const aiRoutes = require('./routes/ai');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -21,9 +23,10 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   name: 'sessionId',
+  proxy: true,
   cookie: {
     httpOnly: true,
-    secure: false,
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000
   }
@@ -31,11 +34,17 @@ app.use(session({
 
 app.use(express.static(path.join(__dirname, '../public')));
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
 app.use('/api', authRoutes);
 app.use('/api', messageRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/ai', aiRoutes);
 
 ensureAdminExists().then(() => {
-  app.listen(PORT, () => console.log(`Servidor a correr em http://localhost:${PORT}`));
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor a correr em http://localhost:${PORT}`);
+  });
 });
