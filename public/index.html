@@ -42,7 +42,6 @@
     .btn-login { background: #4f46e5; color: white; }
     .btn-register { background: #e0e7ff; color: #1e3a8a; }
     .btn-logout { background: #ef4444; color: white; }
-    .btn-nickname { background: #10b981; color: white; }
     .btn-theme { background: #111827; color: white; }
     body.dark .btn-register { background: #334155; color: #f9fafb; }
     body.dark .btn-theme { background: #f9fafb; color: #111827; }
@@ -53,8 +52,6 @@
     button.action { margin-top: 10px; background: #4f46e5; color: white; border: none; padding: 12px 16px; border-radius: 12px; font-weight: 700; cursor: pointer; }
     .message { border-left: 5px solid #4f46e5; background: var(--message); }
     .meta { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
-    .comments { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
-    .comment { background: var(--message); border-radius: 12px; padding: 10px; margin-top: 10px; }
     .small-btn { margin-right: 8px; margin-top: 8px; background: #e5e7eb; color: #111827; border: none; padding: 8px 10px; border-radius: 10px; cursor: pointer; }
     body.dark .small-btn { background: #374151; color: #f9fafb; }
     .edit-btn { background: #fde68a; }
@@ -170,8 +167,13 @@
     let editingMessageId = null;
     let categories = ['Todos'];
 
-    function getStoredNickname() { return localStorage.getItem('nickname') || ''; }
-    function setStoredNickname(name) { localStorage.setItem('nickname', name); }
+    function getStoredNickname() {
+      return localStorage.getItem('nickname') || '';
+    }
+
+    function setStoredNickname(name) {
+      localStorage.setItem('nickname', name);
+    }
 
     function applyTheme(theme) {
       document.body.classList.toggle('dark', theme === 'dark');
@@ -199,109 +201,52 @@
       currentUser = data.user;
       if (currentUser && currentUser.nickname) setStoredNickname(currentUser.nickname);
       renderAuth();
-      await loadSuggestions();
+      loadSuggestions();
     }
 
-    async function loadSuggestions() {
-      const res = await fetch('/api/suggestions', { credentials: 'same-origin' });
-      const data = await res.json();
-      const storedNickname = getStoredNickname();
+    function loadSuggestions() {
+      const savedNickname = getStoredNickname();
+      const names = ['Lua', 'Nuvem', 'Sol', 'Mar', 'Brisa', 'Estrela'];
 
-      if ((currentUser && currentUser.nickname) || storedNickname) {
-        const name = currentUser?.nickname || storedNickname;
-        suggestionsDiv.innerHTML = '';
-        selectedNicknameBox.style.display = 'block';
-        selectedNicknameBox.textContent = `Nome fictício escolhido: ${name}`;
+      if (savedNickname) {
         nicknameCard.style.display = 'none';
-        nicknameInput.value = name;
+        selectedNicknameBox.style.display = 'block';
+        selectedNicknameBox.textContent = `Nome fictício escolhido: ${savedNickname}`;
+        nicknameInput.value = savedNickname;
         return;
       }
 
-      selectedNicknameBox.style.display = 'none';
       nicknameCard.style.display = 'block';
-      suggestionsDiv.innerHTML = data.suggestions
-        .map(name => `<div class="suggestion" data-name="${name}">${name}</div>`)
-        .join('');
-
-      document.querySelectorAll('.suggestion').forEach(el => {
-        el.addEventListener('click', () => pickNickname(el.dataset.name));
-      });
-
+      selectedNicknameBox.style.display = 'none';
+      selectedNicknameBox.textContent = '';
       nicknameInput.value = '';
-    }
 
-    async function pickNickname(name) {
-      nicknameInput.value = name;
-      setStoredNickname(name);
-      nicknameMsg.textContent = 'A guardar nome fictício...';
-
-      const res = await fetch('/api/nickname', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nickname: name })
+      suggestionsDiv.innerHTML = names.map(name => `<div class="suggestion" data-name="${name}">${name}</div>`).join('');
+      document.querySelectorAll('.suggestion').forEach(el => {
+        el.addEventListener('click', () => {
+          nicknameInput.value = el.dataset.name;
+          selectedNicknameBox.style.display = 'block';
+          selectedNicknameBox.textContent = `Nome fictício escolhido: ${el.dataset.name}`;
+        });
       });
-
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        nicknameMsg.textContent = data.error || 'Erro ao guardar nome.';
-        return;
-      }
-
-      currentUser = data.user;
-      setStoredNickname(data.user.nickname);
-      nicknameMsg.textContent = 'Nome fictício guardado com sucesso.';
-      selectedNicknameBox.style.display = 'block';
-      selectedNicknameBox.textContent = `Nome fictício escolhido: ${data.user.nickname}`;
-      nicknameCard.style.display = 'none';
-      renderAuth();
-      await loadMessages();
     }
 
     function renderAuth() {
       const themeLabel = document.body.classList.contains('dark') ? 'Modo claro' : 'Modo escuro';
-      const nickname = currentUser?.nickname || getStoredNickname() || 'utilizador anónimo';
+      const savedNickname = getStoredNickname();
+      const nickname = currentUser?.nickname || savedNickname || 'utilizador anónimo';
       const isAdmin = currentUser?.role === 'admin';
-      const hasNickname = !!(currentUser?.nickname || getStoredNickname());
 
       if (currentUser) {
         authArea.innerHTML = `
           ${isAdmin ? `<a class="admin-link" href="admin.html">Painel Admin</a>` : ''}
           <span style="margin-right:10px;">Olá, <strong>${nickname}</strong></span>
           <button class="btn-theme" id="themeBtn">${themeLabel}</button>
-          <button class="btn-nickname" id="changeNicknameBtn">Alterar nome fictício</button>
           <button class="btn-logout" id="logoutBtn">Sair</button>
         `;
         welcomeCard.style.display = 'block';
         menuCard.style.display = 'block';
-        publishCard.style.display = hasNickname ? 'block' : 'none';
-        nicknameCard.style.display = hasNickname ? 'none' : 'block';
-
-        document.getElementById('logoutBtn').addEventListener('click', logout);
-        document.getElementById('changeNicknameBtn').addEventListener('click', async () => {
-          nicknameCard.style.display = 'block';
-          publishCard.style.display = 'none';
-          const res = await fetch('/api/suggestions', { credentials: 'same-origin' });
-          const data = await res.json();
-
-          suggestionsDiv.innerHTML = data.suggestions
-            .map(name => `<div class="suggestion" data-name="${name}">${name}</div>`)
-            .join('');
-
-          document.querySelectorAll('.suggestion').forEach(el => {
-            el.addEventListener('click', () => pickNickname(el.dataset.name));
-          });
-
-          nicknameInput.value = getStoredNickname() || currentUser.nickname || '';
-          selectedNicknameBox.style.display = getStoredNickname() ? 'block' : 'none';
-          selectedNicknameBox.textContent = getStoredNickname() ? `Nome fictício escolhido: ${getStoredNickname()}` : '';
-          nicknameCard.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        document.getElementById('themeBtn').addEventListener('click', () => {
-          const nextTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
-          applyTheme(nextTheme);
-        });
+        publishCard.style.display = 'block';
       } else {
         authArea.innerHTML = `
           <button class="btn-theme" id="themeBtn">${themeLabel}</button>
@@ -309,28 +254,41 @@
           <a class="btn-register" href="register.html">Registar</a>
         `;
         welcomeCard.style.display = 'block';
-        menuCard.style.display = 'none';
-        publishCard.style.display = 'none';
-        nicknameCard.style.display = 'none';
+        menuCard.style.display = savedNickname ? 'block' : 'none';
+        publishCard.style.display = savedNickname ? 'block' : 'none';
+      }
 
-        document.getElementById('themeBtn').addEventListener('click', () => {
+      const themeBtn = document.getElementById('themeBtn');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
           const nextTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
           applyTheme(nextTheme);
         });
       }
-    }
 
-    async function logout() {
-      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
-      currentUser = null;
-      renderAuth();
-      await loadMessages();
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) logoutBtn.addEventListener('click', logout);
     }
 
     async function saveNickname() {
       const nickname = nicknameInput.value.trim();
       if (!nickname) return;
-      await pickNickname(nickname);
+      setStoredNickname(nickname);
+
+      await fetch('/api/nickname', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nickname })
+      }).catch(() => {});
+
+      nicknameMsg.textContent = 'Nome fictício guardado com sucesso.';
+      selectedNicknameBox.style.display = 'block';
+      selectedNicknameBox.textContent = `Nome fictício escolhido: ${nickname}`;
+      nicknameCard.style.display = 'none';
+      menuCard.style.display = 'block';
+      publishCard.style.display = 'block';
+      renderAuth();
     }
 
     async function loadMessages() {
@@ -349,29 +307,11 @@
           <div class="meta">${new Date(msg.createdAt).toLocaleString()}</div>
           <p>${msg.text}</p>
           <div>
-            ${currentUser && (currentUser.id === msg.ownerId || currentUser.role === 'admin') ? `
+            ${currentUser && currentUser.role === 'admin' ? `
               <button class="small-btn edit-btn" onclick='openEditModal(${msg.id}, ${JSON.stringify(msg.text)}, ${JSON.stringify(msg.category || "Amor")})'>Editar</button>
               <button class="small-btn danger-btn" onclick="adminDeleteMessage(${msg.id})">Apagar</button>
             ` : ''}
             <button class="small-btn" onclick="reportMessage(${msg.id})">Denunciar</button>
-          </div>
-          <div class="comments">
-            <h4>Comentários</h4>
-            <div id="comments-${msg.id}">
-              ${(msg.comments || []).map(c => `
-                <div class="comment">
-                  <strong>${c.user || 'Anónimo'}</strong>: ${c.text}
-                  <div>
-                    <button class="small-btn" onclick="reactComment(${msg.id}, ${c.id}, 'like')">👍 ${c.reactions?.like || 0}</button>
-                    <button class="small-btn" onclick="reactComment(${msg.id}, ${c.id}, 'love')">❤️ ${c.reactions?.love || 0}</button>
-                    <button class="small-btn" onclick="reactComment(${msg.id}, ${c.id}, 'laugh')">😂 ${c.reactions?.laugh || 0}</button>
-                    ${currentUser?.role === 'admin' ? `<button class="small-btn danger-btn" onclick="deleteComment(${c.id})">Apagar</button>` : ''}
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-            <input id="comment-${msg.id}" type="text" placeholder="Escreve um comentário..." />
-            <button class="action" onclick="addComment(${msg.id})">Comentar</button>
           </div>
         </div>
       `).join('');
@@ -381,12 +321,14 @@
       const text = messageInput.value.trim();
       const category = categorySelect.value;
       if (!text) return;
+
       const res = await fetch('/api/messages', {
         method: 'POST',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, category })
       });
+
       const data = await res.json().catch(() => ({}));
       if (!res.ok) return postMsg.textContent = data.error || 'Erro ao publicar.';
       messageInput.value = '';
@@ -407,37 +349,6 @@
       await loadMessages();
     }
 
-    async function deleteComment(commentId) {
-      const res = await fetch(`/api/admin/comments/${commentId}`, { method: 'DELETE', credentials: 'same-origin' });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) return alert(data.error || 'Erro ao apagar comentário.');
-      await loadMessages();
-    }
-
-    async function addComment(messageId) {
-      const input = document.getElementById(`comment-${messageId}`);
-      const text = input.value.trim();
-      if (!text) return;
-      await fetch(`/api/messages/${messageId}/comments`, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text })
-      });
-      input.value = '';
-      await loadMessages();
-    }
-
-    async function reactComment(messageId, commentId, reaction) {
-      await fetch(`/api/messages/${messageId}/comments/${commentId}/reaction`, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reaction })
-      });
-      await loadMessages();
-    }
-
     function openEditModal(id, text, category) {
       editingMessageId = id;
       editText.value = text;
@@ -454,13 +365,22 @@
       const text = editText.value.trim();
       const category = editCategorySelect.value;
       if (!text || !editingMessageId) return;
+
       await fetch(`/api/messages/${editingMessageId}`, {
         method: 'PUT',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, category })
       });
+
       closeEditModal();
+      await loadMessages();
+    }
+
+    async function logout() {
+      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+      currentUser = null;
+      renderAuth();
       await loadMessages();
     }
 
