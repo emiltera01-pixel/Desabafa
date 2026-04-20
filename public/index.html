@@ -3,118 +3,542 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Desabafa</title>
+  <title>Desabafa Aqui</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
+    :root {
+      --bg: linear-gradient(135deg, #f7f7ff, #eef2ff);
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --topbar: #ffffff;
+      --input: #ffffff;
+      --border: #d1d5db;
+      --shadow: rgba(0,0,0,0.06);
+      --message: #fafaff;
+      --suggestion: #f8fafc;
+      --suggestion-hover: #eef2ff;
+      --badge: #eef2ff;
+      --footer: #ffffff;
     }
 
+    body.dark {
+      --bg: linear-gradient(135deg, #0f172a, #111827);
+      --card: #1f2937;
+      --text: #f9fafb;
+      --muted: #cbd5e1;
+      --topbar: #111827;
+      --input: #0f172a;
+      --border: #374151;
+      --shadow: rgba(0,0,0,0.28);
+      --message: #111827;
+      --suggestion: #1f2937;
+      --suggestion-hover: #334155;
+      --badge: #1e293b;
+      --footer: #0f172a;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #0f172a, #1e3a8a);
-      color: white;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .topbar {
+      background: var(--topbar);
+      padding: 16px 24px;
+      box-shadow: 0 2px 12px var(--shadow);
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .topbar a, .topbar button {
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 700;
+    }
+
+    .btn-login { background: #4f46e5; color: white; }
+    .btn-register { background: #e0e7ff; color: #1e3a8a; }
+    .btn-logout { background: #ef4444; color: white; }
+    .btn-theme { background: #111827; color: white; }
+
+    body.dark .btn-register { background: #334155; color: #f9fafb; }
+    body.dark .btn-theme { background: #f9fafb; color: #111827; }
+
+    .container {
+      max-width: 900px;
+      margin: 28px auto;
+      padding: 0 16px 40px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 26px var(--shadow);
+      color: var(--text);
+    }
+
+    textarea, input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      margin-top: 10px;
+      background: var(--input);
+      color: var(--text);
+    }
+
+    textarea::placeholder, input::placeholder { color: var(--muted); }
+
+    button.action {
+      margin-top: 10px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .message {
+      border-left: 5px solid #4f46e5;
+      background: var(--message);
+    }
+
+    .meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .comments {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .comment {
+      background: var(--message);
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    .small-btn {
+      margin-right: 8px;
+      margin-top: 8px;
+      background: #e5e7eb;
+      color: #111827;
+      border: none;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    body.dark .small-btn {
+      background: #374151;
+      color: #f9fafb;
+    }
+
+    .edit-btn { background: #fde68a; }
+    .danger-btn { background: #dc2626; color: white; }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 30px 10px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
     }
 
-    .app {
+    .modal {
       width: 100%;
-      max-width: 420px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 28px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      max-width: 520px;
+      background: var(--card);
+      color: var(--text);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 20px 60px var(--shadow);
     }
 
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 12px;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
     }
 
-    p {
-      line-height: 1.5;
-      margin-bottom: 18px;
-      color: #e5e7eb;
-    }
-
-    input {
-      width: 100%;
-      padding: 14px 16px;
-      border: none;
+    .suggestion {
+      background: var(--suggestion);
+      border: 1px solid var(--border);
       border-radius: 12px;
-      outline: none;
-      font-size: 1rem;
-      margin-top: 10px;
-    }
-
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-top: 12px;
-      font-size: 1rem;
+      padding: 10px 12px;
       cursor: pointer;
-      font-weight: bold;
+      text-align: center;
+      font-weight: 700;
     }
 
-    .primary {
-      background: #22c55e;
+    .suggestion:hover {
+      background: var(--suggestion-hover);
+    }
+
+    #selectedNicknameBox {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--badge);
+      font-weight: 700;
+    }
+
+    .admin-link {
+      background: #111827;
       color: white;
+      margin-right: 10px;
     }
 
-    .secondary {
-      background: white;
-      color: #111827;
+    footer {
+      margin-top: 24px;
+      background: var(--footer);
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding: 18px 16px;
+      font-size: 14px;
     }
 
-    .hidden {
-      display: none;
+    .footer-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      gap: 8px;
+      line-height: 1.5;
     }
 
-    .small {
-      margin-top: 10px;
-      font-size: 0.9rem;
-      color: #cbd5e1;
+    .footer-warning {
+      color: #b91c1c;
+      font-weight: 700;
+    }
+
+    body.dark .footer-warning {
+      color: #fca5a5;
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <div id="nickname-box">
-      <h1>Desabafa</h1>
-      <p>Escolhe um nome fictício para entrares na plataforma.</p>
-      <input type="text" id="nickname" placeholder="Ex: Lua, Azul, Nuvem..." />
-      <button class="primary" onclick="startApp()">Entrar</button>
-      <div class="small">O nome fica guardado neste dispositivo.</div>
+  <div class="topbar">
+    <div><strong>Desabafa Aqui</strong></div>
+    <div id="authArea"></div>
+  </div>
+
+  <div class="container">
+    <div class="card" id="welcomeCard">
+      <h2>Bem-vindo!</h2>
+      <p>Você não está sozinho. Muitas pessoas estão passando por coisas difíceis. Este espaço é para partilhar, aliviar e encontrar apoio.</p>
+    </div>
+
+    <div class="card" id="menuCard" style="display:none;">
+      <h2>Menu principal</h2>
+      <div class="grid">
+        <a class="small-btn" style="display:block;text-align:center;text-decoration:none;padding:14px;" href="#publish">Publicar desabafo</a>
+        <a class="small-btn" style="display:block;text-align:center;text-decoration:none;padding:14px;background:#10b981;color:white;" href="support.html">Apoio emocional via IA</a>
+      </div>
+    </div>
+
+    <div class="card" id="publishCard">
+      <h2 id="publish">Partilha o que estás a sentir</h2>
+      <p style="margin-top:6px;color:var(--muted);">Você não está sozinho. Muitas pessoas estão passando por coisas difíceis. Este espaço é para partilhar, aliviar e encontrar apoio.</p>
+      <textarea id="messageInput" rows="4" placeholder="Diz-me como estás a sentir-te..."></textarea>
+      <div style="margin-top:10px;">
+        <label for="categorySelect" style="font-weight:700;">Categoria</label>
+        <select id="categorySelect"></select>
+      </div>
+      <button class="action" id="sendBtn">Desabafar</button>
+      <div id="postMsg" class="meta"></div>
+    </div>
+
+    <div class="card">
+      <label for="filterCategory" style="font-weight:700;">Filtrar mensagens</label>
+      <select id="filterCategory"></select>
+    </div>
+
+    <div id="messages"></div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div>Este site é totalmente anónimo. Não guardamos informações pessoais.</div>
+      <div class="footer-warning">Aviso importante: Este site não substitui ajuda profissional. Se estiver em perigo ou crise, procure ajuda especializada.</div>
+    </div>
+  </footer>
+
+  <div class="modal-backdrop" id="editModal">
+    <div class="modal">
+      <h3>Editar mensagem</h3>
+      <textarea id="editText" rows="5"></textarea>
+      <div style="margin-top:10px;">
+        <label for="editCategorySelect" style="font-weight:700;">Categoria</label>
+        <select id="editCategorySelect"></select>
+      </div>
+      <button class="action" id="saveEditBtn">Guardar alterações</button>
+      <button class="small-btn" id="cancelEditBtn">Cancelar</button>
     </div>
   </div>
 
   <script>
-    window.addEventListener('load', () => {
-      const saved = localStorage.getItem('nickname');
-      if (saved) {
-        document.getElementById('nickname').value = saved;
-      }
-    });
+    const authArea = document.getElementById('authArea');
+    const welcomeCard = document.getElementById('welcomeCard');
+    const menuCard = document.getElementById('menuCard');
+    const publishCard = document.getElementById('publishCard');
+    const messagesDiv = document.getElementById('messages');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const postMsg = document.getElementById('postMsg');
+    const editModal = document.getElementById('editModal');
+    const editText = document.getElementById('editText');
+    const saveEditBtn = document.getElementById('saveEditBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const categorySelect = document.getElementById('categorySelect');
+    const editCategorySelect = document.getElementById('editCategorySelect');
+    const filterCategory = document.getElementById('filterCategory');
 
-    function startApp() {
-      const name = document.getElementById('nickname').value.trim();
-      if (!name) {
-        alert('Escreve um nome fictício.');
+    let currentUser = null;
+    let editingMessageId = null;
+    let categories = ['Todos'];
+
+    function applyTheme(theme) {
+      document.body.classList.toggle('dark', theme === 'dark');
+      localStorage.setItem('theme', theme);
+      renderAuth();
+    }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      applyTheme(savedTheme === 'dark' ? 'dark' : 'light');
+    }
+
+    async function loadCategories() {
+      const res = await fetch('/api/categories', { credentials: 'same-origin' });
+      const data = await res.json();
+      categories = data.categories || ['Todos'];
+      categorySelect.innerHTML = categories.filter(c => c !== 'Todos').map(c => `<option value="${c}">${c}</option>`).join('');
+      editCategorySelect.innerHTML = categories.filter(c => c !== 'Todos').map(c => `<option value="${c}">${c}</option>`).join('');
+      filterCategory.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    async function loadMe() {
+      const res = await fetch('/api/me', { credentials: 'same-origin' });
+      const data = await res.json();
+      currentUser = data.user;
+      renderAuth();
+    }
+
+    function renderAuth() {
+      const themeLabel = document.body.classList.contains('dark') ? 'Modo claro' : 'Modo escuro';
+
+      if (currentUser) {
+        authArea.innerHTML = `
+          ${currentUser.role === 'admin' ? `<a class="admin-link" href="admin.html">Painel Admin</a>` : ''}
+          <span style="margin-right:10px;">Olá, <strong>${currentUser.nickname || 'utilizador anónimo'}</strong></span>
+          <button class="btn-theme" id="themeBtn">${themeLabel}</button>
+          <button class="btn-logout" id="logoutBtn">Sair</button>
+        `;
+        welcomeCard.style.display = 'block';
+        menuCard.style.display = 'block';
+        publishCard.style.display = 'block';
+
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+        document.getElementById('themeBtn').addEventListener('click', () => {
+          const nextTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
+          applyTheme(nextTheme);
+        });
+      } else {
+        authArea.innerHTML = `
+          <button class="btn-theme" id="themeBtn">${themeLabel}</button>
+          <a class="btn-login" href="login.html">Entrar</a>
+          <a class="btn-register" href="register.html">Registar</a>
+        `;
+        welcomeCard.style.display = 'block';
+        menuCard.style.display = 'none';
+        publishCard.style.display = 'none';
+
+        document.getElementById('themeBtn').addEventListener('click', () => {
+          const nextTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
+          applyTheme(nextTheme);
+        });
+      }
+    }
+
+    async function logout() {
+      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+      currentUser = null;
+      renderAuth();
+      await loadMessages();
+    }
+
+    async function loadMessages() {
+      const category = filterCategory.value || 'Todos';
+      const res = await fetch(`/api/messages?category=${encodeURIComponent(category)}`, { credentials: 'same-origin' });
+      const messages = await res.json();
+
+      if (!messages.length) {
+        messagesDiv.innerHTML = `<div class="card empty">Ainda não há desabafos.</div>`;
         return;
       }
-      localStorage.setItem('nickname', name);
-      window.location.href = '/menu.html';
+
+      messagesDiv.innerHTML = messages.map(msg => `
+        <div class="card message">
+          <h3>${msg.displayName || 'Anónimo'} <span style="font-size:12px; color:var(--muted);">(${msg.category || 'Sem categoria'})</span></h3>
+          <div class="meta">${new Date(msg.createdAt).toLocaleString()}</div>
+          <p>${msg.text}</p>
+          <div>
+            ${currentUser && (currentUser.id === msg.ownerId || currentUser.role === 'admin') ? `
+              <button class="small-btn edit-btn" onclick='openEditModal(${msg.id}, ${JSON.stringify(msg.text)}, ${JSON.stringify(msg.category || "Amor")})'>Editar</button>
+              <button class="small-btn danger-btn" onclick="adminDeleteMessage(${msg.id})">Apagar</button>
+            ` : ''}
+            <button class="small-btn" onclick="reportMessage(${msg.id})">Denunciar</button>
+          </div>
+          <div class="comments">
+            <h4>Comentários</h4>
+            <div id="comments-${msg.id}">
+              ${(msg.comments || []).map(c => `
+                <div class="comment">
+                  <strong>${c.user || 'Anónimo'}</strong>: ${c.text}
+                  <div>
+                    <button class="small-btn" onclick="reactComment(${msg.id}, ${c.id}, 'like')">👍 ${c.reactions?.like || 0}</button>
+                    <button class="small-btn" onclick="reactComment(${msg.id}, ${c.id}, 'love')">❤️ ${c.reactions?.love || 0}</button>
+                    <button class="small-btn" onclick="reactComment(${msg.id}, ${c.id}, 'laugh')">😂 ${c.reactions?.laugh || 0}</button>
+                    ${currentUser?.role === 'admin' ? `<button class="small-btn danger-btn" onclick="deleteComment(${c.id})">Apagar</button>` : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <input id="comment-${msg.id}" type="text" placeholder="Escreve um comentário..." />
+            <button class="action" onclick="addComment(${msg.id})">Comentar</button>
+          </div>
+        </div>
+      `).join('');
     }
+
+    async function publishMessage() {
+      const text = messageInput.value.trim();
+      const category = categorySelect.value;
+      if (!text) return;
+      const res = await fetch('/api/messages', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, category })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) return postMsg.textContent = data.error || 'Erro ao publicar.';
+      messageInput.value = '';
+      await loadMessages();
+    }
+
+    async function reportMessage(id) {
+      const res = await fetch(`/api/messages/${id}/report`, { method: 'POST', credentials: 'same-origin' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) return alert(data.error || 'Erro ao denunciar.');
+      await loadMessages();
+    }
+
+    async function adminDeleteMessage(id) {
+      const res = await fetch(`/api/admin/messages/${id}`, { method: 'DELETE', credentials: 'same-origin' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) return alert(data.error || 'Erro ao apagar.');
+      await loadMessages();
+    }
+
+    async function deleteComment(commentId) {
+      const res = await fetch(`/api/admin/comments/${commentId}`, { method: 'DELETE', credentials: 'same-origin' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) return alert(data.error || 'Erro ao apagar comentário.');
+      await loadMessages();
+    }
+
+    async function addComment(messageId) {
+      const input = document.getElementById(`comment-${messageId}`);
+      const text = input.value.trim();
+      if (!text) return;
+      await fetch(`/api/messages/${messageId}/comments`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      input.value = '';
+      await loadMessages();
+    }
+
+    async function reactComment(messageId, commentId, reaction) {
+      await fetch(`/api/messages/${messageId}/comments/${commentId}/reaction`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reaction })
+      });
+      await loadMessages();
+    }
+
+    function openEditModal(id, text, category) {
+      editingMessageId = id;
+      editText.value = text;
+      editCategorySelect.value = category || 'Amor';
+      editModal.style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      editingMessageId = null;
+      editModal.style.display = 'none';
+    }
+
+    async function saveEdit() {
+      const text = editText.value.trim();
+      const category = editCategorySelect.value;
+      if (!text || !editingMessageId) return;
+      await fetch(`/api/messages/${editingMessageId}`, {
+        method: 'PUT',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, category })
+      });
+      closeEditModal();
+      await loadMessages();
+    }
+
+    sendBtn.addEventListener('click', publishMessage);
+    saveEditBtn.addEventListener('click', saveEdit);
+    cancelEditBtn.addEventListener('click', closeEditModal);
+    editModal.addEventListener('click', (e) => { if (e.target === editModal) closeEditModal(); });
+    filterCategory.addEventListener('change', loadMessages);
+
+    async function initPage() {
+      initTheme();
+      await loadCategories();
+      await loadMe();
+      await loadMessages();
+    }
+
+    initPage();
   </script>
 </body>
 </html>
