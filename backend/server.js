@@ -38,6 +38,18 @@ app.get('/', (req, res) => {
   res.sendFile(path.resolve(process.cwd(), 'public', 'index.html'));
 });
 
+app.get('/admin.html', (req, res) => {
+  res.sendFile(path.resolve(process.cwd(), 'public', 'admin.html'));
+});
+
+app.get('/login.html', (req, res) => {
+  res.sendFile(path.resolve(process.cwd(), 'public', 'login.html'));
+});
+
+app.get('/register.html', (req, res) => {
+  res.sendFile(path.resolve(process.cwd(), 'public', 'register.html'));
+});
+
 app.use('/api', authRoutes);
 app.use('/api', messageRoutes);
 app.use('/api/admin', adminRoutes);
