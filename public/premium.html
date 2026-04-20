@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plano Premium</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #111827);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .card {
+      width: 100%;
+      max-width: 520px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+    h1, h2 {
+      margin-top: 0;
+    }
+    .option {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    button, a.button {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      margin-top: 12px;
+      padding: 14px 16px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .primary { background: #22c55e; color: white; }
+    .secondary { background: #3b82f6; color: white; }
+    .dark { background: #111827; color: white; border: 1px solid #374151; }
+    input, select {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: white;
+      box-sizing: border-box;
+    }
+    .small {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .hidden { display: none; }
+    .price {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #86efac;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Continuar sem limites</h1>
+    <p class="small">Atingiste o limite diário de mensagens. Queres continuar a receber apoio sem limites?</p>
+    <p class="price">250 Kz</p>
+
+    <div id="choiceStep">
+      <div class="option">
+        <h2>Método de Pagamento</h2>
+        <p class="small">Escolha como deseja pagar.</p>
+        <button class="secondary" onclick="showMulticaixa()">Via Multicaixa Express</button>
+        <button class="dark" onclick="showReference()">Pagamento por Referência</button>
+      </div>
+    </div>
+
+    <div id="multicaixaStep" class="hidden">
+      <div class="option">
+        <h2>Multicaixa Express</h2>
+        <p class="small">Pagamento instantâneo via app.</p>
+        <label for="phone">Número de Telefone (Multicaixa Express)</label>
+        <input id="phone" type="tel" placeholder="Colocar o número" />
+        <p class="small">Insira o número associado à sua conta Multicaixa Express.</p>
+        <button class="primary" onclick="payMulticaixa()">Pagar 250 Kz</button>
+        <button class="dark" onclick="backToChoice()">Voltar</button>
+      </div>
+    </div>
+
+    <div id="referenceStep" class="hidden">
+      <div class="option">
+        <h2>Pagamento por Referência</h2>
+        <p class="small">ATM ou Homebanking (2h válido).</p>
+        <label>Referência gerada</label>
+        <input id="referenceCode" type="text" readonly />
+        <button class="secondary" onclick="copyReference()">Copiar referência</button>
+        <button class="primary" onclick="simulateReferencePayment()">Marcar como pago</button>
+        <button class="dark" onclick="backToChoice()">Voltar</button>
+      </div>
+    </div>
+
+    <div id="resultBox" class="option hidden"></div>
+  </div>
+
+  <script>
+    const paymentRef = 'REF-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+    function showMulticaixa() {
+      document.getElementById('choiceStep').classList.add('hidden');
+      document.getElementById('referenceStep').classList.add('hidden');
+      document.getElementById('multicaixaStep').classList.remove('hidden');
+      document.getElementById('resultBox').classList.add('hidden');
+    }
+
+    function showReference() {
+      document.getElementById('choiceStep').classList.add('hidden');
+      document.getElementById('multicaixaStep').classList.add('hidden');
+      document.getElementById('referenceStep').classList.remove('hidden');
+      document.getElementById('resultBox').classList.add('hidden');
+      document.getElementById('referenceCode').value = paymentRef;
+    }
+
+    function backToChoice() {
+      document.getElementById('choiceStep').classList.remove('hidden');
+      document.getElementById('multicaixaStep').classList.add('hidden');
+      document.getElementById('referenceStep').classList.add('hidden');
+      document.getElementById('resultBox').classList.add('hidden');
+    }
+
+    function payMulticaixa() {
+      const phone = document.getElementById('phone').value.trim();
+      if (!phone) {
+        alert('Coloque o número de telefone associado à conta Multicaixa Express.');
+        return;
+      }
+      document.getElementById('resultBox').classList.remove('hidden');
+      document.getElementById('resultBox').innerHTML = `
+        <h2>Pagamento iniciado</h2>
+        <p class="small">Será enviado um pedido para o número ${phone}. Confirme na app Multicaixa Express.</p>
+        <p class="small"><strong>Se isto for um teste real, aqui deves ligar ao gateway oficial do teu provedor.</strong></p>
+      `;
+      document.getElementById('multicaixaStep').classList.add('hidden');
+    }
+
+    function copyReference() {
+      navigator.clipboard.writeText(paymentRef);
+      alert('Referência copiada: ' + paymentRef);
+    }
+
+    function simulateReferencePayment() {
+      document.getElementById('resultBox').classList.remove('hidden');
+      document.getElementById('resultBox').innerHTML = `
+        <h2>Referência gerada</h2>
+        <p class="small">Use esta referência no ATM ou Homebanking dentro de 2h.</p>
+        <p class="small"><strong>${paymentRef}</strong></p>
+      `;
+      document.getElementById('referenceStep').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
