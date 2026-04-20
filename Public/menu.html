@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu Principal</title>
+  <style>
+    body { margin:0; font-family:Arial,sans-serif; background:linear-gradient(135deg,#eef2ff,#f8fafc); color:#111827; }
+    .wrap { max-width:900px; margin:0 auto; padding:24px 16px 40px; }
+    .card { background:white; border-radius:18px; padding:18px; box-shadow:0 8px 26px rgba(0,0,0,.06); margin-bottom:18px; }
+    .menu { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+    .btn {
+      display:block; text-align:center; padding:18px; border-radius:16px; text-decoration:none; font-weight:800;
+      background:#4f46e5; color:white;
+    }
+    .btn.green { background:#10b981; }
+    .btn.gray { background:#334155; }
+    .btn.red { background:#ef4444; }
+    .top-actions { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+    .linkbtn {
+      display:inline-flex; align-items:center; justify-content:center; padding:12px 16px; border-radius:14px;
+      text-decoration:none; font-weight:800; color:white; background:#ef4444;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Menu principal</h1>
+      <p>Escolhe uma opção.</p>
+
+      <div class="top-actions">
+        <a class="linkbtn" href="#" id="logoutBtn">Sair</a>
+      </div>
+
+      <div class="menu">
+        <a class="btn" href="index.html#publish">Publicar desabafo</a>
+        <a class="btn green" href="support.html">Receber apoio emocional via IA</a>
+        <a class="btn gray" href="index.html">Ver desabafos</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+      e.preventDefault();
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'same-origin'
+      });
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>

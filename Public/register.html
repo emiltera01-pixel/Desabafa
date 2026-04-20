@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #eef3ff 0%, #ffffff 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1f2937;
+    }
+    .box {
+      width: 100%;
+      max-width: 420px;
+      background: #ffffff;
+      padding: 28px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    input, button {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid #d7dce5;
+      font-size: 15px;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+      background: white;
+      color: #1f2937;
+    }
+    button {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .msg { color: #dc2626; min-height: 20px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Registar</h1>
+    <div id="msg" class="msg"></div>
+    <input id="username" placeholder="Nome de utilizador" />
+    <input id="password" type="password" placeholder="Senha" />
+    <button id="registerBtn">Criar conta</button>
+    <p><a href="login.html">Voltar ao login</a></p>
+  </div>
+
+  <script>
+    const msg = document.getElementById('msg');
+
+    document.getElementById('registerBtn').addEventListener('click', async () => {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        msg.textContent = data.error || 'Erro no registo.';
+        return;
+      }
+
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>

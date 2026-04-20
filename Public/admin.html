@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel do Usuário Principal</title>
+  <style>
+    :root {
+      --bg: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+      --card: rgba(17, 24, 39, 0.92);
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --line: rgba(148,163,184,0.2);
+      --accent: #7c3aed;
+      --accent2: #22c55e;
+      --danger: #ef4444;
+      --shadow: rgba(0,0,0,0.35);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+    .top {
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .top h1 { margin: 0 0 8px; font-size: 28px; }
+    .top p { margin: 0; color: var(--muted); }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 22px 16px 36px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 18px; }
+    .stat {
+      background: linear-gradient(180deg, rgba(17,24,39,0.95), rgba(15,23,42,0.95));
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 14px 36px var(--shadow);
+    }
+    .stat .label { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+    .stat .value { font-size: 30px; font-weight: 800; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+    button, .linkbtn {
+      border: none;
+      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-dark { background: #1f2937; color: white; border: 1px solid var(--line); }
+    .btn-danger { background: var(--danger); color: white; }
+    .panel {
+      background: rgba(17,24,39,0.92);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 18px 50px var(--shadow);
+      margin-bottom: 18px;
+    }
+    .panel h2 { margin-top: 0; }
+    .search {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(15,23,42,0.8);
+      color: var(--text);
+      margin-bottom: 14px;
+      outline: none;
+    }
+    .item {
+      background: linear-gradient(180deg, rgba(31,41,55,0.96), rgba(17,24,39,0.96));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+    .badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(124,58,237,0.14);
+      border: 1px solid rgba(124,58,237,0.25);
+      color: #ddd6fe;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .badge.warn {
+      background: rgba(245,158,11,0.14);
+      border-color: rgba(245,158,11,0.25);
+      color: #fde68a;
+    }
+    .badge.green {
+      background: rgba(34,197,94,0.14);
+      border-color: rgba(34,197,94,0.25);
+      color: #bbf7d0;
+    }
+    .bodytext { line-height: 1.5; margin: 10px 0 14px; white-space: pre-wrap; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .comments { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
+    .comment {
+      background: rgba(15,23,42,0.75);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .tiny { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .empty { padding: 30px; text-align: center; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div class="wrap" style="padding:0 16px;">
+      <h1>Painel do Usuário Principal</h1>
+      <p>Gestão total de mensagens, denúncias, comentários e uso da IA.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="grid">
+      <div class="stat"><div class="label">Mensagens</div><div class="value" id="statMessages">0</div></div>
+      <div class="stat"><div class="label">Comentários</div><div class="value" id="statComments">0</div></div>
+      <div class="stat"><div class="label">Denunciadas</div><div class="value" id="statReported">0</div></div>
+      <div class="stat"><div class="label">Pessoas que usaram a IA</div><div class="value" id="statAiUsers">0</div></div>
+      <div class="stat"><div class="label">Usuário principal</div><div class="value" style="font-size:20px;" id="statAdmin">-</div></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" id="refreshBtn">Atualizar</button>
+      <a class="linkbtn btn-dark" href="menu.html">Voltar ao menu</a>
+      <a class="linkbtn btn-dark" href="index.html">Voltar à plataforma</a>
+      <button class="btn-danger" id="logoutBtn">Sair</button>
+    </div>
+
+    <div class="panel">
+      <h2>Mensagens e comentários</h2>
+      <input class="search" id="searchBox" placeholder="Pesquisar por mensagem, comentário, nome ou categoria..." />
+      <div id="list"></div>
+    </div>
+  </div>
+
+  <script>
+    const list = document.getElementById('list');
+    const searchBox = document.getElementById('searchBox');
+    let allMessages = [];
+
+    async function api(url, options = {}) {
+      const res = await fetch(url, { credentials: 'same-origin', ...options });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Erro');
+      return data;
+    }
+
+    async function ensureAdmin() {
+      const me = await api('/api/me');
+      if (!me.user || me.user.role !== 'admin') {
+        window.location.href = 'login.html';
+        return false;
+      }
+      document.getElementById('statAdmin').textContent = me.user.nickname || me.user.username || 'Admin';
+      return true;
+    }
+
+    function renderStats(messages, aiUsersCount) {
+      const totalComments = messages.reduce((acc, m) => acc + (m.comments ? m.comments.length : 0), 0);
+      const reported = messages.filter(m => (m.reports || 0) > 0).length;
+      document.getElementById('statMessages').textContent = messages.length;
+      document.getElementById('statComments').textContent = totalComments;
+      document.getElementById('statReported').textContent = reported;
+      document.getElementById('statAiUsers').textContent = aiUsersCount;
+    }
+
+    function renderList(messages) {
+      if (!messages.length) {
+        list.innerHTML = '<div class="empty">Nenhum conteúdo encontrado.</div>';
+        return;
+      }
+
+      list.innerHTML = messages.map(msg => `
+        <div class="item">
+          <div class="meta">
+            <span class="badge">${msg.displayName || 'Anónimo'}</span>
+            <span class="badge">${msg.category || 'Sem categoria'}</span>
+            ${msg.reports > 0 ? `<span class="badge warn">Denúncias ${msg.reports}</span>` : `<span class="badge green">Sem denúncias</span>`}
+            <span>${msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ''}</span>
+          </div>
+          <div class="bodytext">${msg.text || ''}</div>
+          <div class="row">
+            <button class="btn-danger" onclick="deleteMessage(${msg.id})">Apagar mensagem</button>
+          </div>
+          <div class="comments">
+            <strong>Comentários</strong>
+            ${(msg.comments || []).length ? msg.comments.map(c => `
+              <div class="comment">
+                <div class="meta">
+                  <span class="badge">${c.user || 'Anónimo'}</span>
+                  <span>${c.id ? new Date(c.id).toLocaleString() : ''}</span>
+                </div>
+                <div>${c.text || ''}</div>
+                <div class="tiny">👍 ${c.reactions?.like || 0} | ❤️ ${c.reactions?.love || 0} | 😂 ${c.reactions?.laugh || 0}</div>
+                <div class="row" style="margin-top:10px;">
+                  <button class="btn-danger" onclick="deleteComment(${c.id})">Apagar comentário</button>
+                </div>
+              </div>
+            `).join('') : '<div class="tiny" style="margin-top:10px;">Sem comentários.</div>'}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterMessages() {
+      const q = searchBox.value.trim().toLowerCase();
+      if (!q) {
+        renderList(allMessages);
+        return;
+      }
+
+      const filtered = allMessages.filter(m => {
+        const messageText = `${m.displayName || ''} ${m.category || ''} ${m.text || ''} ${m.reports || 0}`.toLowerCase();
+        const commentText = (m.comments || [])
+          .map(c => `${c.user || ''} ${c.text || ''}`)
+          .join(' ')
+          .toLowerCase();
+        return messageText.includes(q) || commentText.includes(q);
+      });
+
+      renderList(filtered);
+    }
+
+    async function loadAdmin() {
+      try {
+        const ok = await ensureAdmin();
+        if (!ok) return;
+
+        const stats = await api('/api/admin/stats');
+        const messages = await api('/api/messages');
+
+        allMessages = messages;
+        renderStats(messages, stats.aiUsersCount);
+        renderList(messages);
+      } catch (e) {
+        list.innerHTML = `<div class="empty">${e.message}</div>`;
+      }
+    }
+
+    async function deleteMessage(id) {
+      await api(`/api/admin/messages/${id}`, { method: 'DELETE' });
+      await loadAdmin();
+    }
+
+    async function deleteComment(id) {
+      await api(`/api/admin/comments/${id}`, { method: 'DELETE' });
+      await loadAdmin();
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', loadAdmin);
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+      window.location.href = 'login.html';
+    });
+
+    searchBox.addEventListener('input', filterMessages);
+
+    loadAdmin();
+  </script>
+</body>
+</html>

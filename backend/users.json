@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1776633549439,
+    "username": "admin",
+    "password": "$2b$10$x2TtoOznqDHsxPRCW1c67.KbgjL0C2/1mrWjAPjLlmrFkB5z6h9ma",
+    "nickname": "Admin",
+    "role": "admin"
+  },
+  {
+    "id": 1776633596850,
+    "username": "Jose",
+    "password": "$2b$10$n6uX1yfy0MI.RkHjW36LF.XuoZF8tY1BYzQz1qjhypQTMgswRUKxC",
+    "nickname": "CalmoPétala4699",
+    "role": "user"
+  },
+  {
+    "id": 1776634268787,
+    "username": "joão",
+    "password": "$2b$10$vcBKw0/.BQ31IG4YmWkCb.jx1Yt17fgOXNTVNwp1XKa9Fd2Xf2tCS",
+    "nickname": "DouradoVale7020",
+    "role": "user"
+  }
+]

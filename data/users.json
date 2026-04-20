@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1776637732294,
+    "username": "admin",
+    "password": "$2b$10$YV7ERAM2aahOE6NJd2.2A.jks0ccYJJdMcW6Lcp56mqcH.pGXvKF6",
+    "nickname": "Admin",
+    "role": "admin"
+  },
+  {
+    "id": 1776637769549,
+    "username": "Jose",
+    "password": "$2b$10$OG2MPT2zaIHRj8HVX48yrOdWE5m9y4XoLsbdEvZrlrhgcUcc5vwQG",
+    "nickname": "LumeSol4501",
+    "role": "user"
+  },
+  {
+    "id": 1776638191713,
+    "username": "joão",
+    "password": "$2b$10$8sWK24dmGMNrhN4b7ThH1.O6lxcATcuiFZgLsriY0XygK7qcNwhyW",
+    "nickname": null,
+    "role": "user"
+  }
+]

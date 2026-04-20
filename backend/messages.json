@@ -1,0 +1,36 @@
+[
+  {
+    "id": 1776634255678,
+    "ownerId": 1776633596850,
+    "ownerUsername": "Jose",
+    "displayName": "CalmoPétala4699",
+    "text": "ola",
+    "category": "Amor",
+    "createdAt": "2026-04-19T21:30:55.678Z",
+    "comments": [
+      {
+        "id": 1776634297565,
+        "ownerId": 1776634268787,
+        "user": "DouradoVale7020",
+        "text": "tudo bem?",
+        "reactions": {
+          "like": 0,
+          "love": 0,
+          "laugh": 0
+        }
+      },
+      {
+        "id": 1776637291347,
+        "ownerId": 1776634268787,
+        "user": "DouradoVale7020",
+        "text": "tudo sim",
+        "reactions": {
+          "like": 0,
+          "love": 0,
+          "laugh": 0
+        }
+      }
+    ],
+    "reports": 0
+  }
+]

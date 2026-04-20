@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Germana - Apoio via IA</title>
+  <style>
+    :root {
+      --bg: linear-gradient(135deg, #eef2ff, #f8fafc);
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #d1d5db;
+      --accent: #10b981;
+      --accent2: #4f46e5;
+      --user: #dbeafe;
+      --assistant: #ecfdf5;
+      --shadow: rgba(0,0,0,0.08);
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #4f46e5, #10b981);
+      color: white;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 14px 36px var(--shadow);
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+    }
+    .hero p {
+      margin: 0;
+      opacity: 0.95;
+      line-height: 1.6;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 28px var(--shadow);
+      margin-bottom: 18px;
+    }
+    .warn {
+      color: #b91c1c;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+    .chat {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 18px;
+      margin-bottom: 18px;
+      max-height: 460px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .bubble {
+      padding: 14px 16px;
+      border-radius: 18px;
+      max-width: 88%;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
+    .bubble.user {
+      align-self: flex-end;
+      background: var(--user);
+      color: #111827;
+      border-bottom-right-radius: 6px;
+    }
+    .bubble.assistant {
+      align-self: flex-start;
+      background: var(--assistant);
+      color: #111827;
+      border-bottom-left-radius: 6px;
+    }
+    .bubble .label {
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      opacity: 0.8;
+    }
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 15px;
+      outline: none;
+      background: white;
+      color: var(--text);
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    button, .linkbtn {
+      border: none;
+      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-secondary { background: var(--accent2); color: white; }
+    .btn-gray { background: #e5e7eb; color: #111827; }
+    .btn-danger { background: var(--danger); color: white; }
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .top-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top-actions">
+      <div></div>
+      <button class="btn-danger" id="logoutBtn">Sair</button>
+    </div>
+
+    <div class="hero">
+      <h1>Germana</h1>
+      <p id="userLine">Uma conversa de apoio emocional com memória nesta sessão.</p>
+    </div>
+
+    <div class="card">
+      <p class="warn">Aviso: este apoio não substitui ajuda profissional. Se estiveres em risco ou em crise, procura ajuda especializada imediatamente.</p>
+
+      <div class="chat" id="chatBox"></div>
+
+      <textarea id="supportInput" placeholder="Escreve aqui o que estás a sentir..."></textarea>
+      <div class="row">
+        <button class="btn-primary" id="askBtn">Enviar</button>
+        <button class="btn-gray" id="clearBtn">Limpar conversa</button>
+        <a class="linkbtn btn-secondary" href="menu.html">Voltar ao menu</a>
+      </div>
+
+      <div class="muted" id="status"></div>
+    </div>
+  </div>
+
+  <script>
+    const supportInput = document.getElementById('supportInput');
+    const askBtn = document.getElementById('askBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const chatBox = document.getElementById('chatBox');
+    const statusEl = document.getElementById('status');
+
+    function addBubble(role, content) {
+      const div = document.createElement('div');
+      div.className = `bubble ${role}`;
+      div.innerHTML = `<div class="label">${role === 'user' ? 'Você' : 'Germana'}</div>${String(content).replace(/\n/g, '<br>')}`;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function loadUserName() {
+      const res = await fetch('/api/me', { credentials: 'same-origin' });
+      const data = await res.json().catch(() => ({}));
+      if (data.user) {
+        document.getElementById('userLine').textContent =
+          `Olá, ${data.user.username || data.user.nickname || 'amigo(a)'} — a Germana está aqui para conversar contigo.`;
+      }
+    }
+
+    async function loadHistory() {
+      const res = await fetch('/api/ai/history', { credentials: 'same-origin' });
+      const data = await res.json().catch(() => ({}));
+      chatBox.innerHTML = '';
+      (data.history || []).forEach(item => {
+        if (item.role === 'user' || item.role === 'assistant') {
+          addBubble(item.role, item.content);
+        }
+      });
+    }
+
+    askBtn.addEventListener('click', async () => {
+      const message = supportInput.value.trim();
+      if (!message) return;
+
+      addBubble('user', message);
+      supportInput.value = '';
+      statusEl.textContent = 'A responder...';
+
+      const res = await fetch('/api/ai/support', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        statusEl.textContent = data.error || 'Erro ao obter apoio.';
+        return;
+      }
+
+      addBubble('assistant', data.reply);
+      statusEl.textContent = 'Conversa guardada nesta sessão.';
+    });
+
+    clearBtn.addEventListener('click', async () => {
+      await fetch('/api/ai/clear', {
+        method: 'POST',
+        credentials: 'same-origin'
+      });
+      chatBox.innerHTML = '';
+      statusEl.textContent = 'Conversa limpa.';
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'same-origin'
+      });
+      window.location.href = 'login.html';
+    });
+
+    loadUserName();
+    loadHistory();
+  </script>
+</body>
+</html>
