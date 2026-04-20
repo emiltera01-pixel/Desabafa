@@ -89,17 +89,6 @@
     }
     .message { border-left: 5px solid #4f46e5; background: var(--message); }
     .meta { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
-    .comments {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-    .comment {
-      background: var(--message);
-      border-radius: 12px;
-      padding: 10px;
-      margin-top: 10px;
-    }
     .small-btn {
       margin-right: 8px;
       margin-top: 8px;
@@ -111,37 +100,8 @@
       cursor: pointer;
     }
     body.dark .small-btn { background: #374151; color: #f9fafb; }
-    .edit-btn { background: #fde68a; }
-    .danger-btn { background: #dc2626; color: white; }
+    .admin-link { background: #111827; color: white; margin-right: 10px; }
     .empty { text-align: center; color: var(--muted); padding: 30px 10px; }
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .modal {
-      width: 100%;
-      max-width: 520px;
-      background: var(--card);
-      color: var(--text);
-      border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 20px 60px var(--shadow);
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 10px;
-    }
-    .admin-link {
-      background: #111827;
-      color: white;
-      margin-right: 10px;
-    }
     footer {
       margin-top: 24px;
       background: var(--footer);
@@ -162,18 +122,19 @@
       font-weight: 700;
     }
     body.dark .footer-warning { color: #fca5a5; }
-    #limitBox {
-      display:none;
-      background:#fff3cd;
-      color:#111827;
-    }
-    #nicknameCard { display:none; }
+    #nicknameCard { display: none; }
+    #limitBox { display: none; background:#fff3cd; color:#111827; }
     #selectedNicknameBox {
       margin-top: 12px;
       padding: 12px;
       border-radius: 12px;
       background: var(--badge);
       font-weight: 700;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
     }
     .suggestion {
       background: #f8fafc;
@@ -187,6 +148,37 @@
     .suggestion:hover { background: #eef2ff; }
     body.dark .suggestion { background: #1f2937; }
     body.dark .suggestion:hover { background: #334155; }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      background: var(--card);
+      color: var(--text);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 20px 60px var(--shadow);
+    }
+    .comments {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .comment {
+      background: var(--message);
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .edit-btn { background: #fde68a; }
+    .danger-btn { background: #dc2626; color: white; }
   </style>
 </head>
 <body>
@@ -353,8 +345,8 @@
     }
 
     async function pickNickname(name) {
-      nicknameInput.value = name;
       setStoredNickname(name);
+      nicknameInput.value = name;
       nicknameMsg.textContent = 'Nome fictício guardado com sucesso.';
       selectedNicknameBox.textContent = `Nome fictício escolhido: ${name}`;
       nicknameCard.style.display = 'none';
@@ -377,24 +369,12 @@
       const data = await res.json();
       currentUser = data.user;
       renderAuth();
-      await loadSuggestions();
-
-      const savedNickname = getStoredNickname();
-      if (!savedNickname) {
-        nicknameCard.style.display = 'block';
-        publishCard.style.display = 'none';
-        menuCard.style.display = 'none';
-      } else {
-        nicknameCard.style.display = 'none';
-        publishCard.style.display = 'block';
-        menuCard.style.display = 'block';
-        nicknameInput.value = savedNickname;
-        selectedNicknameBox.textContent = `Nome fictício escolhido: ${savedNickname}`;
-      }
     }
 
     function renderAuth() {
       const themeLabel = document.body.classList.contains('dark') ? 'Modo claro' : 'Modo escuro';
+      const savedNickname = getStoredNickname();
+
       if (currentUser) {
         authArea.innerHTML = `
           ${currentUser.role === 'admin' ? `<a class="admin-link" href="admin.html">Painel Admin</a>` : ''}
@@ -404,7 +384,9 @@
         `;
         welcomeCard.style.display = 'block';
         menuCard.style.display = 'block';
-        publishCard.style.display = 'block';
+        publishCard.style.display = savedNickname ? 'block' : 'none';
+        nicknameCard.style.display = savedNickname ? 'none' : 'block';
+
         document.getElementById('logoutBtn').addEventListener('click', logout);
         document.getElementById('themeBtn').addEventListener('click', () => {
           const nextTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
@@ -417,16 +399,10 @@
           <a class="btn-register" href="register.html">Registar</a>
         `;
         welcomeCard.style.display = 'block';
-        const savedNickname = getStoredNickname();
-        if (!savedNickname) {
-          nicknameCard.style.display = 'block';
-          publishCard.style.display = 'none';
-          menuCard.style.display = 'none';
-        } else {
-          nicknameCard.style.display = 'none';
-          publishCard.style.display = 'block';
-          menuCard.style.display = 'block';
-        }
+        menuCard.style.display = savedNickname ? 'block' : 'none';
+        publishCard.style.display = savedNickname ? 'block' : 'none';
+        nicknameCard.style.display = savedNickname ? 'none' : 'block';
+
         document.getElementById('themeBtn').addEventListener('click', () => {
           const nextTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
           applyTheme(nextTheme);
@@ -471,19 +447,24 @@
         showLimitBox();
         return;
       }
+
       const text = messageInput.value.trim();
       const category = categorySelect.value;
       if (!text) return;
+
       const res = await fetch('/api/messages', {
         method: 'POST',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, category })
       });
+
       const data = await res.json().catch(() => ({}));
       if (!res.ok) return postMsg.textContent = data.error || 'Erro ao publicar.';
+
       messageInput.value = '';
       incrementDailyCount();
+
       if (getDailyCount() >= MAX_MESSAGES) showLimitBox();
       await loadMessages();
     }
@@ -518,30 +499,37 @@
       const text = editText.value.trim();
       const category = editCategorySelect.value;
       if (!text || !editingMessageId) return;
+
       await fetch(`/api/messages/${editingMessageId}`, {
         method: 'PUT',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, category })
       });
+
       closeEditModal();
       await loadMessages();
     }
 
-    sendBtn.addEventListener('click', publishMessage);
-    saveEditBtn.addEventListener('click', saveEdit);
-    cancelEditBtn.addEventListener('click', closeEditModal);
-    editModal.addEventListener('click', (e) => { if (e.target === editModal) closeEditModal(); });
-    filterCategory.addEventListener('change', loadMessages);
-    continuePlanBtn.addEventListener('click', () => window.location.href = '/premium.html');
     saveNicknameBtn.addEventListener('click', async () => {
       const name = nicknameInput.value.trim();
       if (!name) return;
       await pickNickname(name);
     });
 
+    continuePlanBtn.addEventListener('click', () => {
+      window.location.href = '/premium.html';
+    });
+
+    sendBtn.addEventListener('click', publishMessage);
+    saveEditBtn.addEventListener('click', saveEdit);
+    cancelEditBtn.addEventListener('click', closeEditModal);
+    editModal.addEventListener('click', (e) => { if (e.target === editModal) closeEditModal(); });
+    filterCategory.addEventListener('change', loadMessages);
+
     async function initPage() {
       initTheme();
+      await loadSuggestions();
       await loadCategories();
       await loadMe();
       await loadMessages();
