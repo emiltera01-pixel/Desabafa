@@ -188,28 +188,6 @@
       gap: 10px;
     }
 
-    .suggestion {
-      background: var(--suggestion);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
-      cursor: pointer;
-      text-align: center;
-      font-weight: 700;
-    }
-
-    .suggestion:hover {
-      background: var(--suggestion-hover);
-    }
-
-    #selectedNicknameBox {
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 12px;
-      background: var(--badge);
-      font-weight: 700;
-    }
-
     .admin-link {
       background: #111827;
       color: white;
@@ -410,7 +388,7 @@
           <div class="meta">${new Date(msg.createdAt).toLocaleString()}</div>
           <p>${msg.text}</p>
           <div>
-            ${currentUser && (currentUser.id === msg.ownerId || currentUser.role === 'admin') ? `
+            ${currentUser?.role === 'admin' ? `
               <button class="small-btn edit-btn" onclick='openEditModal(${msg.id}, ${JSON.stringify(msg.text)}, ${JSON.stringify(msg.category || "Amor")})'>Editar</button>
               <button class="small-btn danger-btn" onclick="adminDeleteMessage(${msg.id})">Apagar</button>
             ` : ''}
