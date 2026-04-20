@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(session({
   secret: 'desabafa-secreto',
   resave: false,
@@ -14,7 +15,8 @@ app.use(session({
   cookie: { maxAge: 1000 * 60 * 60 * 24 * 30 }
 }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
 
 let categories = ['Todos', 'Amor', 'Família', 'Trabalho', 'Saúde', 'Ansiedade', 'Amizade', 'Outro'];
 let messages = [];
@@ -23,12 +25,12 @@ let commentId = 1;
 let totalUniqueUsers = 0;
 const visitedSessions = new Set();
 
-function getDisplayName(req) {
-  return req.session.user?.nickname || req.session.nickname || 'Anónimo';
-}
-
 function isAdmin(req) {
   return req.session.user && req.session.user.role === 'admin';
+}
+
+function getDisplayName(req) {
+  return req.session.user?.nickname || req.session.nickname || 'Anónimo';
 }
 
 app.use((req, res, next) => {
@@ -40,15 +42,15 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(publicPath, 'index.html'));
 });
 
 app.get('/support.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'support.html'));
+  res.sendFile(path.join(publicPath, 'support.html'));
 });
 
 app.get('/admin.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+  res.sendFile(path.join(publicPath, 'admin.html'));
 });
 
 app.get('/api/me', (req, res) => {
@@ -76,12 +78,6 @@ app.post('/api/nickname', (req, res) => {
   res.json({ ok: true, user: req.session.user });
 });
 
-app.get('/api/suggestions', (req, res) => {
-  res.json({
-    suggestions: ['Lua', 'Nuvem', 'Sol', 'Mar', 'Brisa', 'Estrela']
-  });
-});
-
 app.get('/api/categories', (req, res) => {
   res.json({ categories });
 });
@@ -89,18 +85,13 @@ app.get('/api/categories', (req, res) => {
 app.get('/api/messages', (req, res) => {
   const category = req.query.category || 'Todos';
   let result = messages;
-
-  if (category !== 'Todos') {
-    result = result.filter(m => m.category === category);
-  }
-
+  if (category !== 'Todos') result = result.filter(m => m.category === category);
   res.json(result);
 });
 
 app.post('/api/messages', (req, res) => {
   const text = String(req.body.text || '').trim();
   const category = String(req.body.category || 'Outro').trim();
-
   if (!text) return res.status(400).json({ error: 'Mensagem vazia.' });
 
   const msg = {
@@ -152,10 +143,7 @@ app.delete('/api/admin/messages/:id', (req, res) => {
   const before = messages.length;
   messages = messages.filter(m => m.id !== id);
 
-  if (messages.length === before) {
-    return res.status(404).json({ error: 'Mensagem não encontrada.' });
-  }
-
+  if (messages.length === before) return res.status(404).json({ error: 'Mensagem não encontrada.' });
   res.json({ ok: true });
 });
 
@@ -188,10 +176,10 @@ app.post('/api/messages/:messageId/comments/:commentId/reaction', (req, res) => 
   const comment = msg.comments.find(c => c.id === commentIdNum);
   if (!comment) return res.status(404).json({ error: 'Comentário não encontrado.' });
 
-  if (!comment.reactions[reaction]) comment.reactions[reaction] = 0;
+  if (comment.reactions[reaction] == null) comment.reactions[reaction] = 0;
   comment.reactions[reaction] += 1;
 
-  res.json({ ok: true, reaction: comment.reactions });
+  res.json({ ok: true });
 });
 
 app.delete('/api/admin/comments/:commentId', (req, res) => {
@@ -201,32 +189,24 @@ app.delete('/api/admin/comments/:commentId', (req, res) => {
   for (const msg of messages) {
     const before = msg.comments.length;
     msg.comments = msg.comments.filter(c => c.id !== commentIdNum);
-    if (msg.comments.length !== before) {
-      return res.json({ ok: true });
-    }
+    if (msg.comments.length !== before) return res.json({ ok: true });
   }
 
   res.status(404).json({ error: 'Comentário não encontrado.' });
 });
 
 app.post('/api/logout', (req, res) => {
-  req.session.destroy(() => {
-    res.json({ ok: true });
-  });
+  req.session.destroy(() => res.json({ ok: true }));
 });
 
 app.get('/api/admin/stats', (req, res) => {
   if (!isAdmin(req)) return res.status(403).json({ error: 'Acesso negado.' });
 
-  const totalMessages = messages.length;
-  const totalComments = messages.reduce((sum, msg) => sum + msg.comments.length, 0);
-  const totalReports = messages.reduce((sum, msg) => sum + msg.reports, 0);
-
   res.json({
     totalUniqueUsers,
-    totalMessages,
-    totalComments,
-    totalReports
+    totalMessages: messages.length,
+    totalComments: messages.reduce((sum, msg) => sum + msg.comments.length, 0),
+    totalReports: messages.reduce((sum, msg) => sum + msg.reports, 0)
   });
 });
 

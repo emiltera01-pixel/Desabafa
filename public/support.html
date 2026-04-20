@@ -3,298 +3,255 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Apoio emocional via IA</title>
+  <title>Germana - Apoio via IA</title>
   <style>
     :root {
-      --bg: linear-gradient(135deg, #f7f7ff, #eef2ff);
+      --bg: linear-gradient(135deg, #eef2ff, #f8fafc);
       --card: #ffffff;
-      --text: #1f2937;
+      --text: #111827;
       --muted: #6b7280;
       --border: #d1d5db;
-      --shadow: rgba(0,0,0,0.06);
-      --bot: #eef2ff;
-      --user: #dcfce7;
-      --btn: #4f46e5;
-      --btn2: #10b981;
-    }
-    body.dark {
-      --bg: linear-gradient(135deg, #0f172a, #111827);
-      --card: #1f2937;
-      --text: #f9fafb;
-      --muted: #cbd5e1;
-      --border: #374151;
-      --shadow: rgba(0,0,0,0.28);
-      --bot: #111827;
-      --user: #14532d;
-      --btn: #6366f1;
-      --btn2: #059669;
+      --accent: #10b981;
+      --accent2: #4f46e5;
+      --user: #dbeafe;
+      --assistant: #ecfdf5;
+      --shadow: rgba(0,0,0,0.08);
+      --danger: #ef4444;
     }
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
-    .topbar {
-      background: var(--card);
-      box-shadow: 0 2px 12px var(--shadow);
-      padding: 16px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
-    .topbar a, .topbar button {
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-weight: 700;
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
     }
-    .btn-back { background: #e5e7eb; color: #111827; }
-    .btn-theme { background: #111827; color: white; }
-    body.dark .btn-back { background: #334155; color: #f9fafb; }
-    body.dark .btn-theme { background: #f9fafb; color: #111827; }
-
-    .container { max-width: 980px; margin: 28px auto; padding: 0 16px 40px; }
+    .hero {
+      background: linear-gradient(135deg, #4f46e5, #10b981);
+      color: white;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 14px 36px var(--shadow);
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+    }
+    .hero p {
+      margin: 0;
+      opacity: 0.95;
+      line-height: 1.6;
+    }
     .card {
       background: var(--card);
-      color: var(--text);
-      border-radius: 18px;
-      padding: 18px;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 28px var(--shadow);
       margin-bottom: 18px;
-      box-shadow: 0 8px 26px var(--shadow);
     }
-    .suggestions {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .suggestion {
-      background: var(--bot);
-      border: 1px solid var(--border);
-      padding: 12px;
-      border-radius: 12px;
-      cursor: pointer;
+    .warn {
+      color: #b91c1c;
       font-weight: 700;
-      text-align: center;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+    .chat {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 18px;
+      margin-bottom: 18px;
+      max-height: 460px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .bubble {
+      padding: 14px 16px;
+      border-radius: 18px;
+      max-width: 88%;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
+    .bubble.user {
+      align-self: flex-end;
+      background: var(--user);
+      color: #111827;
+      border-bottom-right-radius: 6px;
+    }
+    .bubble.assistant {
+      align-self: flex-start;
+      background: var(--assistant);
+      color: #111827;
+      border-bottom-left-radius: 6px;
+    }
+    .bubble .label {
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      opacity: 0.8;
     }
     textarea {
       width: 100%;
-      margin-top: 10px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 15px;
-      background: var(--card);
-      color: var(--text);
-      min-height: 130px;
+      min-height: 140px;
       resize: vertical;
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 15px;
+      outline: none;
+      background: white;
+      color: var(--text);
     }
-    .actions {
+    .row {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-top: 10px;
+      margin-top: 12px;
     }
-    .action-btn {
+    button, .linkbtn {
       border: none;
       cursor: pointer;
-      border-radius: 12px;
       padding: 12px 16px;
-      font-weight: 700;
-      color: white;
-      background: var(--btn);
-    }
-    .voice-btn { background: var(--btn2); }
-    .stop-btn { background: #ef4444; }
-    .messages {
-      display: grid;
-      gap: 12px;
-      margin-top: 16px;
-    }
-    .msg {
-      padding: 14px;
       border-radius: 14px;
-      border: 1px solid var(--border);
-      white-space: pre-wrap;
-      line-height: 1.5;
+      font-weight: 800;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
-    .user { background: var(--user); margin-left: 10%; }
-    .bot { background: var(--bot); margin-right: 10%; }
-    .status { margin-top: 10px; font-size: 14px; color: var(--muted); }
-    .hint { margin-top: 8px; font-size: 14px; color: var(--muted); }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-secondary { background: var(--accent2); color: white; }
+    .btn-gray { background: #e5e7eb; color: #111827; }
+    .btn-danger { background: var(--danger); color: white; }
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .top-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div><strong>Apoio emocional via IA</strong></div>
-    <div>
-      <a class="btn-back" href="index.html">Voltar</a>
-      <button class="btn-theme" id="themeBtn">Modo escuro</button>
+  <div class="wrap">
+    <div class="top-actions">
+      <div></div>
+      <button class="btn-danger" id="logoutBtn">Sair</button>
     </div>
-  </div>
 
-  <div class="container">
+    <div class="hero">
+      <h1>Germana</h1>
+      <p id="userLine">Uma conversa de apoio emocional com memória nesta sessão.</p>
+    </div>
+
     <div class="card">
-      <h2>Escreve ou fala comigo</h2>
-      <p>Se quiseres, podes usar o microfone para ditar a tua mensagem.</p>
+      <p class="warn">Aviso: este apoio não substitui ajuda profissional. Se estiveres em risco ou em crise, procura ajuda especializada imediatamente.</p>
 
-      <div class="suggestions" id="suggestions"></div>
+      <div class="chat" id="chatBox"></div>
 
-      <textarea id="userInput" placeholder="Diz-me o que estás a sentir..."></textarea>
-
-      <div class="actions">
-        <button class="action-btn" id="sendBtn">Enviar</button>
-        <button class="action-btn voice-btn" id="voiceBtn">🎤 Falar</button>
-        <button class="action-btn stop-btn" id="stopBtn" style="display:none;">Parar</button>
+      <textarea id="supportInput" placeholder="Escreve aqui o que estás a sentir..."></textarea>
+      <div class="row">
+        <button class="btn-primary" id="askBtn">Enviar</button>
+        <button class="btn-gray" id="clearBtn">Limpar conversa</button>
+        <a class="linkbtn btn-secondary" href="menu.html">Voltar ao menu</a>
       </div>
 
-      <div class="status" id="voiceStatus"></div>
-      <div class="hint">Dica: clica numa sugestão para preencher rapidamente.</div>
-    </div>
-
-    <div class="card">
-      <h3>Conversa</h3>
-      <div class="messages" id="chat"></div>
+      <div class="muted" id="status"></div>
     </div>
   </div>
 
   <script>
-    const themeBtn = document.getElementById('themeBtn');
-    const userInput = document.getElementById('userInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const voiceBtn = document.getElementById('voiceBtn');
-    const stopBtn = document.getElementById('stopBtn');
-    const voiceStatus = document.getElementById('voiceStatus');
-    const chat = document.getElementById('chat');
-    const suggestions = document.getElementById('suggestions');
+    const supportInput = document.getElementById('supportInput');
+    const askBtn = document.getElementById('askBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const chatBox = document.getElementById('chatBox');
+    const statusEl = document.getElementById('status');
 
-    const presetSuggestions = [
-      'Estou ansioso e preciso de acalmar.',
-      'Sinto-me triste e sozinho.',
-      'Quero desabafar sobre a família.',
-      'Estou com medo e não sei o que fazer.',
-      'Preciso de motivação para continuar.',
-      'Quero organizar os meus pensamentos.'
-    ];
-
-    let recognition = null;
-    let isRecording = false;
-
-    function applyTheme(theme) {
-      document.body.classList.toggle('dark', theme === 'dark');
-      localStorage.setItem('theme', theme);
-      themeBtn.textContent = theme === 'dark' ? 'Modo claro' : 'Modo escuro';
-    }
-
-    function initTheme() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      applyTheme(savedTheme);
-    }
-
-    function addMessage(text, who) {
+    function addBubble(role, content) {
       const div = document.createElement('div');
-      div.className = `msg ${who}`;
-      div.textContent = text;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
+      div.className = `bubble ${role}`;
+      div.innerHTML = `<div class="label">${role === 'user' ? 'Você' : 'Germana'}</div>${String(content).replace(/\n/g, '<br>')}`;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function renderSuggestions() {
-      suggestions.innerHTML = presetSuggestions.map(s => `<div class="suggestion" data-text="${s}">${s}</div>`).join('');
-      document.querySelectorAll('.suggestion').forEach(el => {
-        el.addEventListener('click', () => {
-          userInput.value = el.dataset.text;
-          userInput.focus();
-        });
+    async function loadUserName() {
+      const res = await fetch('/api/me', { credentials: 'same-origin' });
+      const data = await res.json().catch(() => ({}));
+      if (data.user) {
+        document.getElementById('userLine').textContent =
+          `Olá, ${data.user.username || data.user.nickname || 'amigo(a)'} — a Germana está aqui para conversar contigo.`;
+      }
+    }
+
+    async function loadHistory() {
+      const res = await fetch('/api/ai/history', { credentials: 'same-origin' });
+      const data = await res.json().catch(() => ({}));
+      chatBox.innerHTML = '';
+      (data.history || []).forEach(item => {
+        if (item.role === 'user' || item.role === 'assistant') {
+          addBubble(item.role, item.content);
+        }
       });
     }
 
-    async function fakeAIReply(text) {
-      const lower = text.toLowerCase();
-      if (lower.includes('triste') || lower.includes('sozinho')) {
-        return 'Sinto muito que estejas a passar por isso. Respira devagar e diz-me o que aconteceu.';
-      }
-      if (lower.includes('ansioso') || lower.includes('medo')) {
-        return 'Estou contigo. Tenta focar-te no presente e diz-me qual é a parte mais difícil agora.';
-      }
-      if (lower.includes('família')) {
-        return 'Conflitos familiares podem doer muito. Queres contar-me um pouco mais?';
-      }
-      return 'Obrigado por confiar em mim. Estou aqui para te ouvir.';
-    }
+    askBtn.addEventListener('click', async () => {
+      const message = supportInput.value.trim();
+      if (!message) return;
 
-    async function sendToAI() {
-      const text = userInput.value.trim();
-      if (!text) return;
-      addMessage(text, 'user');
-      userInput.value = '';
-      const reply = await fakeAIReply(text);
-      addMessage(reply, 'bot');
-    }
+      addBubble('user', message);
+      supportInput.value = '';
+      statusEl.textContent = 'A responder...';
 
-    function initVoice() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        voiceBtn.disabled = true;
-        voiceStatus.textContent = 'O teu navegador não suporta reconhecimento de voz.';
+      const res = await fetch('/api/ai/support', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        statusEl.textContent = data.error || 'Erro ao obter apoio.';
         return;
       }
 
-      recognition = new SpeechRecognition();
-      recognition.lang = 'pt-PT';
-      recognition.interimResults = true;
-      recognition.continuous = false;
-
-      recognition.onstart = () => {
-        isRecording = true;
-        voiceBtn.style.display = 'none';
-        stopBtn.style.display = 'inline-block';
-        voiceStatus.textContent = 'A ouvir... fala agora.';
-      };
-
-      recognition.onresult = (event) => {
-        let transcript = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
-        }
-        userInput.value = transcript.trim();
-      };
-
-      recognition.onerror = () => {
-        voiceStatus.textContent = 'Não foi possível reconhecer a voz.';
-      };
-
-      recognition.onend = () => {
-        isRecording = false;
-        voiceBtn.style.display = 'inline-block';
-        stopBtn.style.display = 'none';
-        if (userInput.value.trim()) voiceStatus.textContent = 'Mensagem convertida para texto.';
-      };
-    }
-
-    themeBtn.addEventListener('click', () => {
-      const nextTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
-      applyTheme(nextTheme);
+      addBubble('assistant', data.reply);
+      statusEl.textContent = 'Conversa guardada nesta sessão.';
     });
 
-    sendBtn.addEventListener('click', sendToAI);
-
-    voiceBtn.addEventListener('click', () => {
-      if (recognition && !isRecording) recognition.start();
+    clearBtn.addEventListener('click', async () => {
+      await fetch('/api/ai/clear', {
+        method: 'POST',
+        credentials: 'same-origin'
+      });
+      chatBox.innerHTML = '';
+      statusEl.textContent = 'Conversa limpa.';
     });
 
-    stopBtn.addEventListener('click', () => {
-      if (recognition && isRecording) recognition.stop();
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'same-origin'
+      });
+      window.location.href = 'login.html';
     });
 
-    userInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) sendToAI();
-    });
-
-    initTheme();
-    renderSuggestions();
-    initVoice();
+    loadUserName();
+    loadHistory();
   </script>
 </body>
 </html>

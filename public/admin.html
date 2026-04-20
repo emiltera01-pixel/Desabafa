@@ -5,99 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel Admin</title>
   <style>
-    :root {
-      --bg: linear-gradient(135deg, #f8fafc, #eef2ff);
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --border: #d1d5db;
-      --shadow: rgba(0,0,0,0.06);
-    }
-    body.dark {
-      --bg: linear-gradient(135deg, #0f172a, #111827);
-      --card: #1f2937;
-      --text: #f9fafb;
-      --muted: #cbd5e1;
-      --border: #374151;
-      --shadow: rgba(0,0,0,0.28);
-    }
+    :root { --bg: linear-gradient(135deg, #f8fafc, #eef2ff); --card: #fff; --text: #1f2937; --muted: #6b7280; --border: #d1d5db; --shadow: rgba(0,0,0,0.06); }
+    body.dark { --bg: linear-gradient(135deg, #0f172a, #111827); --card: #1f2937; --text: #f9fafb; --muted: #cbd5e1; --border: #374151; --shadow: rgba(0,0,0,0.28); }
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
-    .topbar {
-      background: var(--card);
-      padding: 16px 24px;
-      box-shadow: 0 2px 12px var(--shadow);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .topbar a, .topbar button {
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-weight: 700;
-    }
-    .btn-back { background: #e5e7eb; color: #111827; }
-    .btn-theme { background: #111827; color: white; }
-    body.dark .btn-back { background: #334155; color: #f9fafb; }
-    body.dark .btn-theme { background: #f9fafb; color: #111827; }
-
-    .container { max-width: 1100px; margin: 28px auto; padding: 0 16px 40px; }
-    .card {
-      background: var(--card);
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 18px;
-      box-shadow: 0 8px 26px var(--shadow);
-    }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-    }
-    .stat {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-    }
-    .stat h3 { margin: 0 0 8px; font-size: 16px; }
-    .stat .value { font-size: 28px; font-weight: 800; }
-    .messages { display: grid; gap: 12px; }
-    .msg {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      background: var(--card);
-    }
-    .meta { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
-    .btn {
-      border: none;
-      cursor: pointer;
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-weight: 700;
-      background: #dc2626;
-      color: white;
-      margin-right: 8px;
-      margin-top: 8px;
-    }
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #111827;
-    }
-    body.dark .btn-secondary { background: #334155; color: #f9fafb; }
-    .comment {
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 12px;
-      background: rgba(127,127,127,0.08);
-      border: 1px solid var(--border);
-    }
+    body { margin:0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+    .topbar { background: var(--card); padding: 16px 24px; box-shadow: 0 2px 12px var(--shadow); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+    .topbar a, .topbar button { text-decoration:none; border:none; cursor:pointer; padding:10px 14px; border-radius:12px; font-weight:700; }
+    .btn-back { background:#e5e7eb; color:#111827; }
+    .btn-theme { background:#111827; color:#fff; }
+    body.dark .btn-back { background:#334155; color:#f9fafb; }
+    body.dark .btn-theme { background:#f9fafb; color:#111827; }
+    .container { max-width:1100px; margin:28px auto; padding:0 16px 40px; }
+    .card { background:var(--card); border-radius:18px; padding:18px; margin-bottom:18px; box-shadow:0 8px 26px var(--shadow); }
+    .stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; }
+    .stat { border:1px solid var(--border); border-radius:14px; padding:16px; background:rgba(127,127,127,0.06); }
+    .stat .value { font-size:28px; font-weight:800; }
+    .messages { display:grid; gap:12px; }
+    .msg { border:1px solid var(--border); border-radius:14px; padding:14px; }
+    .meta { font-size:13px; color:var(--muted); margin-bottom:8px; }
+    .btn { border:none; cursor:pointer; border-radius:12px; padding:10px 14px; font-weight:700; background:#dc2626; color:#fff; margin-right:8px; margin-top:8px; }
+    .btn-secondary { background:#e5e7eb; color:#111827; }
+    body.dark .btn-secondary { background:#334155; color:#f9fafb; }
+    .comment { margin-top:10px; padding:10px; border-radius:12px; background:rgba(127,127,127,0.08); border:1px solid var(--border); }
   </style>
 </head>
 <body>
@@ -113,22 +42,10 @@
     <div class="card">
       <h2>Estatísticas</h2>
       <div class="stats">
-        <div class="stat">
-          <h3>Total de utilizadores que já acederam</h3>
-          <div class="value" id="totalUsers">0</div>
-        </div>
-        <div class="stat">
-          <h3>Total de mensagens</h3>
-          <div class="value" id="totalMessages">0</div>
-        </div>
-        <div class="stat">
-          <h3>Total de comentários</h3>
-          <div class="value" id="totalComments">0</div>
-        </div>
-        <div class="stat">
-          <h3>Total de denúncias</h3>
-          <div class="value" id="totalReports">0</div>
-        </div>
+        <div class="stat"><h3>Total de utilizadores</h3><div class="value" id="totalUsers">0</div></div>
+        <div class="stat"><h3>Total de mensagens</h3><div class="value" id="totalMessages">0</div></div>
+        <div class="stat"><h3>Total de comentários</h3><div class="value" id="totalComments">0</div></div>
+        <div class="stat"><h3>Total de denúncias</h3><div class="value" id="totalReports">0</div></div>
       </div>
     </div>
 
@@ -152,11 +69,6 @@
       themeBtn.textContent = theme === 'dark' ? 'Modo claro' : 'Modo escuro';
     }
 
-    function initTheme() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      applyTheme(savedTheme);
-    }
-
     async function loadStats() {
       const res = await fetch('/api/admin/stats', { credentials: 'same-origin' });
       const data = await res.json();
@@ -164,7 +76,6 @@
         messagesDiv.innerHTML = `<div class="msg">Acesso negado ou erro ao carregar estatísticas.</div>`;
         return;
       }
-
       totalUsers.textContent = data.totalUniqueUsers ?? 0;
       totalMessages.textContent = data.totalMessages ?? 0;
       totalComments.textContent = data.totalComments ?? 0;
@@ -187,8 +98,7 @@
           <p>${msg.text}</p>
           <div class="meta">Denúncias: ${msg.reports || 0}</div>
           <button class="btn" onclick="deleteMessage(${msg.id})">Apagar mensagem</button>
-          <div style="margin-top:10px;">
-            <strong>Comentários</strong>
+          <div style="margin-top:10px;"><strong>Comentários</strong>
             ${(msg.comments || []).map(c => `
               <div class="comment">
                 <div><strong>${c.user || 'Anónimo'}</strong>: ${c.text}</div>
@@ -202,10 +112,7 @@
     }
 
     async function deleteMessage(id) {
-      const res = await fetch(`/api/admin/messages/${id}`, {
-        method: 'DELETE',
-        credentials: 'same-origin'
-      });
+      const res = await fetch(`/api/admin/messages/${id}`, { method: 'DELETE', credentials: 'same-origin' });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) return alert(data.error || 'Erro ao apagar.');
       await loadStats();
@@ -213,10 +120,7 @@
     }
 
     async function deleteComment(id) {
-      const res = await fetch(`/api/admin/comments/${id}`, {
-        method: 'DELETE',
-        credentials: 'same-origin'
-      });
+      const res = await fetch(`/api/admin/comments/${id}`, { method: 'DELETE', credentials: 'same-origin' });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) return alert(data.error || 'Erro ao apagar comentário.');
       await loadStats();
@@ -228,7 +132,8 @@
       applyTheme(nextTheme);
     });
 
-    initTheme();
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    applyTheme(savedTheme);
     loadStats();
     loadMessages();
   </script>
