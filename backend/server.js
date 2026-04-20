@@ -35,7 +35,7 @@ app.use(session({
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
+  res.sendFile(path.resolve(process.cwd(), 'public', 'index.html'));
 });
 
 app.use('/api', authRoutes);
